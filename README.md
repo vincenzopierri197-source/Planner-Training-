@@ -4,10 +4,15 @@ Distribuzione prevista con Vercel collegato a questo repository GitHub.
 
 ## File principali
 
-- `index.html`: applicazione web.
-- `api/coach.js`: endpoint Gemini con ricerca Google e fonti.
+- `index.html`: applicazione web e interfaccia del catalogo.
+- `exercises.js`: database locale con 46 esercizi strutturati.
+- `api/coach.js`: endpoint Gemini con ricerca Google e fonti citate.
 - `package.json`: abilita i moduli ES usati dalla funzione backend.
 - `vercel.json`: configurazione della funzione API.
+
+## Eserciziario biomeccanico
+
+Il database è stato compilato dal compendio PDF fornito e contiene nome italiano e internazionale, distretto, target principale, muscoli sinergisti, pattern e attrezzatura. Nel sito si può cercare per nome, muscolo o attrezzatura e filtrare per distretto, attrezzatura e pattern. I dati sono incorporati come script locale: il catalogo non richiede una chiamata API o un servizio esterno.
 
 ## Pubblicazione
 
