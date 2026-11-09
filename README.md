@@ -5,7 +5,7 @@ Distribuzione prevista con Vercel collegato a questo repository GitHub.
 ## File principali
 
 - `index.html`: applicazione web e interfaccia del catalogo.
-- `exercises.js`: database locale con 46 esercizi strutturati.
+- `exercises.js`: database locale con 40 esercizi strutturati.
 - `api/coach.js`: endpoint Gemini con ricerca Google e fonti citate.
 - `package.json`: abilita i moduli ES usati dalla funzione backend.
 - `vercel.json`: configurazione della funzione API.
