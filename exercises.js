@@ -1,4 +1,5 @@
-// Database derivato dal compendio biomeccanico fornito dall'utente.
+// Database verificato sul compendio biomeccanico fornito dall’utente.
+// Include gli esercizi del PDF con curva di resistenza e ROM ottimale.
 window.WORKOUT_EXERCISES = [
   {
     "id": "ex-01",
@@ -8,7 +9,9 @@ window.WORKOUT_EXERCISES = [
     "target": "Deltoide anteriore",
     "sinergici": "Deltoide laterale; tricipiti; trapezio superiore; core",
     "pattern": "Push",
-    "attrezzatura": "Bilanciere"
+    "attrezzatura": "Bilanciere",
+    "curva": "Campana",
+    "rom": "Da clavicola a estensione completa"
   },
   {
     "id": "ex-02",
@@ -18,7 +21,9 @@ window.WORKOUT_EXERCISES = [
     "target": "Deltoide laterale",
     "sinergici": "Trapezio superiore; sovraspinato; deltoide anteriore",
     "pattern": "Isolation",
-    "attrezzatura": "Manubri"
+    "attrezzatura": "Manubri",
+    "curva": "Discendente",
+    "rom": "Da fianco a 90° di abduzione gleno-omerale"
   },
   {
     "id": "ex-03",
@@ -28,7 +33,9 @@ window.WORKOUT_EXERCISES = [
     "target": "Deltoide laterale",
     "sinergici": "Trapezio superiore; sovraspinato",
     "pattern": "Isolation",
-    "attrezzatura": "Cavi"
+    "attrezzatura": "Cavi",
+    "curva": "Uniforme (campana)",
+    "rom": "Cross-body basso fino a 90° di abduzione"
   },
   {
     "id": "ex-04",
@@ -38,7 +45,9 @@ window.WORKOUT_EXERCISES = [
     "target": "Deltoide posteriore",
     "sinergici": "Romboidi; trapezio medio e inferiore; infraspinato",
     "pattern": "Pull",
-    "attrezzatura": "Manubri"
+    "attrezzatura": "Manubri",
+    "curva": "Discendente",
+    "rom": "Da adduzione scapolare a linea omerale estesa"
   },
   {
     "id": "ex-05",
@@ -48,7 +57,9 @@ window.WORKOUT_EXERCISES = [
     "target": "Deltoide posteriore",
     "sinergici": "Infraspinato; piccolo rotondo; trapezio medio; romboidi",
     "pattern": "Pull",
-    "attrezzatura": "Cavi"
+    "attrezzatura": "Cavi",
+    "curva": "Ascendente",
+    "rom": "Da braccia estese a rotazione esterna massimale"
   },
   {
     "id": "ex-06",
@@ -58,406 +69,416 @@ window.WORKOUT_EXERCISES = [
     "target": "Infraspinato",
     "sinergici": "Piccolo rotondo; deltoide posteriore",
     "pattern": "Rotation",
-    "attrezzatura": "Cavi"
+    "attrezzatura": "Cavi",
+    "curva": "Campana",
+    "rom": "Da intrarotazione 45° a extrarotazione 90°"
   },
   {
     "id": "ex-07",
-    "gruppo": "Spalle e cuffia",
-    "nome": "Intrarotazioni alla puleggia",
-    "inglese": "Cable Internal Rotation",
-    "target": "Sottoscapolare",
-    "sinergici": "Gran dorsale; grande rotondo; pettorale maggiore",
-    "pattern": "Rotation",
-    "attrezzatura": "Cavi"
-  },
-  {
-    "id": "ex-08",
-    "gruppo": "Spalle e cuffia",
-    "nome": "Push press con bilanciere",
-    "inglese": "Barbell Push Press",
-    "target": "Deltoide anteriore",
-    "sinergici": "Quadricipiti; glutei; tricipiti; core",
-    "pattern": "Push / Power",
-    "attrezzatura": "Bilanciere"
-  },
-  {
-    "id": "ex-09",
     "gruppo": "Pettorali",
     "nome": "Distensioni su panca piana",
     "inglese": "Flat Barbell Bench Press",
     "target": "Pettorale maggiore (sternocostale)",
     "sinergici": "Deltoide anteriore; tricipiti; brachiali",
     "pattern": "Push",
-    "attrezzatura": "Bilanciere"
+    "attrezzatura": "Bilanciere",
+    "curva": "Campana",
+    "rom": "Da contatto sterno/linea capezzoli a estensione"
   },
   {
-    "id": "ex-10",
+    "id": "ex-08",
     "gruppo": "Pettorali",
     "nome": "Distensioni su panca inclinata con manubri",
     "inglese": "Incline Dumbbell Bench Press",
     "target": "Pettorale maggiore (clavicolare)",
     "sinergici": "Deltoide anteriore; tricipiti; brachiali",
     "pattern": "Push",
-    "attrezzatura": "Manubri"
+    "attrezzatura": "Manubri",
+    "curva": "Campana",
+    "rom": "Da massimo allungamento alto a spinta verticale"
   },
   {
-    "id": "ex-11",
-    "gruppo": "Pettorali",
-    "nome": "Distensioni su panca declinata",
-    "inglese": "Decline Barbell Bench Press",
-    "target": "Pettorale maggiore (addominale)",
-    "sinergici": "Tricipiti; brachiali; deltoide anteriore",
-    "pattern": "Push",
-    "attrezzatura": "Bilanciere"
-  },
-  {
-    "id": "ex-12",
+    "id": "ex-09",
     "gruppo": "Pettorali",
     "nome": "Croci ai cavi alti",
     "inglese": "High-to-Low Cable Crossover",
     "target": "Pettorale maggiore (sternocostale / addominale)",
     "sinergici": "Deltoide anteriore",
     "pattern": "Isolation",
-    "attrezzatura": "Cavi"
+    "attrezzatura": "Cavi",
+    "curva": "Ascendente",
+    "rom": "Da abduzione orizzontale estrema a chiusura sulla linea mediana"
   },
   {
-    "id": "ex-13",
+    "id": "ex-10",
     "gruppo": "Pettorali",
     "nome": "Piegamenti sulle braccia",
     "inglese": "Push-Up",
     "target": "Pettorale maggiore",
     "sinergici": "Tricipiti; brachiali; deltoide anteriore; core",
     "pattern": "Push",
-    "attrezzatura": "Corpo libero"
+    "attrezzatura": "Corpo libero",
+    "curva": "Campana",
+    "rom": "Da petto a terra a estensione completa dei gomiti"
   },
   {
-    "id": "ex-14",
+    "id": "ex-11",
     "gruppo": "Pettorali",
     "nome": "Dip alle parallele",
     "inglese": "Parallel Bar Dips",
     "target": "Pettorale maggiore (fascio inferiore)",
     "sinergici": "Tricipiti; brachiali; deltoide anteriore",
     "pattern": "Push",
-    "attrezzatura": "Corpo libero / parallele"
+    "attrezzatura": "Corpo libero / parallele",
+    "curva": "Ascendente",
+    "rom": "Da flessione spalla 90° a estensione completa"
   },
   {
-    "id": "ex-15",
-    "gruppo": "Pettorali",
-    "nome": "Pectoral machine",
-    "inglese": "Machine Chest Fly",
-    "target": "Pettorale maggiore",
-    "sinergici": "Deltoide anteriore",
-    "pattern": "Isolation",
-    "attrezzatura": "Macchina"
-  },
-  {
-    "id": "ex-16",
+    "id": "ex-12",
     "gruppo": "Dorso e colonna",
     "nome": "Trazioni alla sbarra supine",
     "inglese": "Chin-Up",
     "target": "Gran dorsale",
     "sinergici": "Bicipite brachiale; brachiale; romboidi",
     "pattern": "Pull",
-    "attrezzatura": "Corpo libero"
+    "attrezzatura": "Corpo libero",
+    "curva": "Campana",
+    "rom": "Da braccia estese a mento oltre la barra"
   },
   {
-    "id": "ex-17",
+    "id": "ex-13",
     "gruppo": "Dorso e colonna",
     "nome": "Lat machine avanti",
     "inglese": "Lat Pulldown",
     "target": "Gran dorsale",
     "sinergici": "Gran rotondo; bicipite brachiale; trapezio inferiore",
     "pattern": "Pull",
-    "attrezzatura": "Cavi / macchina"
+    "attrezzatura": "Cavi / macchina",
+    "curva": "Discendente",
+    "rom": "Da allungamento scapolare alto al petto"
   },
   {
-    "id": "ex-18",
+    "id": "ex-14",
     "gruppo": "Dorso e colonna",
     "nome": "Rematore con bilanciere",
     "inglese": "Barbell Bent-Over Row",
     "target": "Gran dorsale; romboidi",
     "sinergici": "Trapezio medio e inferiore; bicipite brachiale; erettori spinali",
     "pattern": "Pull",
-    "attrezzatura": "Bilanciere"
+    "attrezzatura": "Bilanciere",
+    "curva": "Campana",
+    "rom": "Da protrazione scapolare a chiusura sull’addome"
   },
   {
-    "id": "ex-19",
+    "id": "ex-15",
     "gruppo": "Dorso e colonna",
     "nome": "Rematore con manubrio a un braccio",
     "inglese": "One-Arm Dumbbell Row",
     "target": "Gran dorsale",
     "sinergici": "Grande rotondo; romboidi; bicipite brachiale",
     "pattern": "Pull",
-    "attrezzatura": "Manubri"
+    "attrezzatura": "Manubri",
+    "curva": "Campana",
+    "rom": "Da massimo allungamento verticale a flessione della spalla"
   },
   {
-    "id": "ex-20",
-    "gruppo": "Dorso e colonna",
-    "nome": "Pulley basso",
-    "inglese": "Seated Cable Row",
-    "target": "Romboidi; trapezio medio",
-    "sinergici": "Gran dorsale; bicipite brachiale; erettori spinali",
-    "pattern": "Pull",
-    "attrezzatura": "Cavi"
-  },
-  {
-    "id": "ex-21",
+    "id": "ex-16",
     "gruppo": "Dorso e colonna",
     "nome": "Pulldown a braccia tese",
     "inglese": "Straight-Arm Pulldown",
     "target": "Gran dorsale",
     "sinergici": "Grande rotondo; capo lungo del tricipite",
     "pattern": "Isolation / Pull",
-    "attrezzatura": "Cavi"
+    "attrezzatura": "Cavi",
+    "curva": "Campana",
+    "rom": "Da flessione a 180° a estensione omerale sui fianchi"
   },
   {
-    "id": "ex-22",
+    "id": "ex-17",
     "gruppo": "Dorso e colonna",
     "nome": "Stacchi da terra",
     "inglese": "Barbell Deadlift",
     "target": "Erettori spinali; glutei",
     "sinergici": "Ischiocrurali; trapezio; avambracci; quadricipiti",
     "pattern": "Hinge",
-    "attrezzatura": "Bilanciere"
+    "attrezzatura": "Bilanciere",
+    "curva": "Campana",
+    "rom": "Da dischi a terra a bloccaggio di anche e ginocchia"
   },
   {
-    "id": "ex-23",
-    "gruppo": "Dorso e colonna",
-    "nome": "Iperestensioni lombari",
-    "inglese": "Back Extension",
-    "target": "Erettori spinali",
-    "sinergici": "Glutei; ischiocrurali",
-    "pattern": "Hinge",
-    "attrezzatura": "Macchina / panca"
-  },
-  {
-    "id": "ex-24",
+    "id": "ex-18",
     "gruppo": "Braccia",
     "nome": "Curl con bilanciere",
     "inglese": "Barbell Biceps Curl",
     "target": "Bicipite brachiale",
     "sinergici": "Brachiale; brachioradiale",
     "pattern": "Pull",
-    "attrezzatura": "Bilanciere"
+    "attrezzatura": "Bilanciere",
+    "curva": "Campana",
+    "rom": "Da estensione completa del gomito a supinazione totale"
   },
   {
-    "id": "ex-25",
+    "id": "ex-19",
     "gruppo": "Braccia",
     "nome": "Curl a martello con manubri",
     "inglese": "Dumbbell Hammer Curl",
     "target": "Brachioradiale; brachiale",
     "sinergici": "Bicipite brachiale; flessori del polso",
     "pattern": "Pull",
-    "attrezzatura": "Manubri"
+    "attrezzatura": "Manubri",
+    "curva": "Campana",
+    "rom": "Da estensione completa a flessione del gomito a 130°"
   },
   {
-    "id": "ex-26",
+    "id": "ex-20",
     "gruppo": "Braccia",
     "nome": "Curl su panca inclinata",
     "inglese": "Incline Dumbbell Curl",
     "target": "Bicipite brachiale (capo lungo)",
     "sinergici": "Brachiale",
     "pattern": "Pull",
-    "attrezzatura": "Manubri"
+    "attrezzatura": "Manubri",
+    "curva": "Ascendente",
+    "rom": "Da spalla estesa indietro a flessione completa"
   },
   {
-    "id": "ex-27",
-    "gruppo": "Braccia",
-    "nome": "Distensioni tricipiti su panca stretta",
-    "inglese": "Close-Grip Bench Press",
-    "target": "Tricipite brachiale",
-    "sinergici": "Pettorale maggiore; deltoide anteriore",
-    "pattern": "Push",
-    "attrezzatura": "Bilanciere"
-  },
-  {
-    "id": "ex-28",
+    "id": "ex-21",
     "gruppo": "Braccia",
     "nome": "Pushdown ai cavi con corda",
     "inglese": "Cable Triceps Pushdown",
     "target": "Tricipite brachiale (capi laterale e mediale)",
     "sinergici": "Anconeo",
     "pattern": "Push",
-    "attrezzatura": "Cavi"
+    "attrezzatura": "Cavi",
+    "curva": "Ascendente",
+    "rom": "Da flessione stretta a estensione completa del gomito"
   },
   {
-    "id": "ex-29",
+    "id": "ex-22",
     "gruppo": "Braccia",
     "nome": "French press con bilanciere Z",
     "inglese": "EZ-Bar Skull Crusher",
     "target": "Tricipite brachiale (capo lungo)",
     "sinergici": "Anconeo",
     "pattern": "Push",
-    "attrezzatura": "Bilanciere Z"
+    "attrezzatura": "Bilanciere Z",
+    "curva": "Campana",
+    "rom": "Da flessione dei gomiti dietro la testa a bloccaggio"
   },
   {
-    "id": "ex-30",
-    "gruppo": "Braccia",
-    "nome": "Curl inverso con bilanciere",
-    "inglese": "Reverse Barbell Curl",
-    "target": "Brachioradiale; estensori del polso",
-    "sinergici": "Bicipite brachiale",
-    "pattern": "Pull",
-    "attrezzatura": "Bilanciere"
-  },
-  {
-    "id": "ex-31",
+    "id": "ex-23",
     "gruppo": "Core e addominali",
     "nome": "Crunch a terra",
     "inglese": "Floor Crunch",
     "target": "Retto dell'addome",
     "sinergici": "Obliqui interni ed esterni",
     "pattern": "Core / Flexion",
-    "attrezzatura": "Corpo libero"
+    "attrezzatura": "Corpo libero",
+    "curva": "Campana",
+    "rom": "Da scapole a terra a flessione toracica alta"
   },
   {
-    "id": "ex-32",
+    "id": "ex-24",
     "gruppo": "Core e addominali",
     "nome": "Sollevamento gambe alla sbarra",
     "inglese": "Hanging Leg Raise",
     "target": "Retto dell'addome (fascio inferiore)",
     "sinergici": "Iliopsoas; tensore della fascia lata",
     "pattern": "Core / Flexion",
-    "attrezzatura": "Corpo libero"
+    "attrezzatura": "Corpo libero",
+    "curva": "Campana",
+    "rom": "Da gambe verticali a flessione pelvica completa"
   },
   {
-    "id": "ex-33",
+    "id": "ex-25",
     "gruppo": "Core e addominali",
     "nome": "Plank sugli avambracci",
     "inglese": "Forearm Plank",
     "target": "Trasverso dell'addome",
     "sinergici": "Retto dell'addome; obliqui; erettori spinali",
     "pattern": "Core / Stability",
-    "attrezzatura": "Corpo libero"
+    "attrezzatura": "Corpo libero",
+    "curva": "Isometrica",
+    "rom": "Mantenimento con assetto pelvico-lombare neutro"
   },
   {
-    "id": "ex-34",
-    "gruppo": "Core e addominali",
-    "nome": "Russian twist con kettlebell",
-    "inglese": "Russian Twist",
-    "target": "Obliqui interni ed esterni",
-    "sinergici": "Retto dell'addome; flessori dell'anca",
-    "pattern": "Core / Rotation",
-    "attrezzatura": "Kettlebell"
-  },
-  {
-    "id": "ex-35",
+    "id": "ex-26",
     "gruppo": "Core e addominali",
     "nome": "Pallof press al cavo",
     "inglese": "Cable Pallof Press",
     "target": "Obliqui / trasverso (anti-rotazione)",
     "sinergici": "Trasverso dell'addome; gluteo medio",
     "pattern": "Core / Stability",
-    "attrezzatura": "Cavi"
+    "attrezzatura": "Cavi",
+    "curva": "Ascendente",
+    "rom": "Da petto a estensione delle braccia mantenendo il blocco anti-rotazione"
   },
   {
-    "id": "ex-36",
+    "id": "ex-27",
     "gruppo": "Arti inferiori",
     "nome": "Squat con bilanciere dietro",
     "inglese": "Back Barbell Squat",
     "target": "Quadricipiti",
     "sinergici": "Grande gluteo; ischiocrurali; erettori spinali; core",
     "pattern": "Squat",
-    "attrezzatura": "Bilanciere"
+    "attrezzatura": "Bilanciere",
+    "curva": "Campana",
+    "rom": "Da stazione eretta a parallelo o sotto-parallelo"
   },
   {
-    "id": "ex-37",
+    "id": "ex-28",
     "gruppo": "Arti inferiori",
     "nome": "Front squat con bilanciere",
     "inglese": "Front Barbell Squat",
     "target": "Quadricipiti (prevalenza femorale)",
     "sinergici": "Grande gluteo; core; erettori spinali",
     "pattern": "Squat",
-    "attrezzatura": "Bilanciere"
+    "attrezzatura": "Bilanciere",
+    "curva": "Campana",
+    "rom": "Da busto eretto a flessione profonda delle ginocchia"
   },
   {
-    "id": "ex-38",
+    "id": "ex-29",
     "gruppo": "Arti inferiori",
     "nome": "Leg press a 45°",
     "inglese": "45-Degree Leg Press",
     "target": "Quadricipiti",
     "sinergici": "Grande gluteo; adduttori",
     "pattern": "Squat",
-    "attrezzatura": "Macchina"
+    "attrezzatura": "Macchina",
+    "curva": "Campana",
+    "rom": "Da flessione ginocchio 90° a estensione quasi totale"
   },
   {
-    "id": "ex-39",
+    "id": "ex-30",
     "gruppo": "Arti inferiori",
     "nome": "Stacco rumeno con bilanciere",
     "inglese": "Romanian Deadlift",
     "target": "Ischiocrurali",
     "sinergici": "Grande gluteo; erettori spinali",
     "pattern": "Hinge",
-    "attrezzatura": "Bilanciere"
+    "attrezzatura": "Bilanciere",
+    "curva": "Campana",
+    "rom": "Da stazione eretta al massimo allungamento degli ischiocrurali"
   },
   {
-    "id": "ex-40",
+    "id": "ex-31",
     "gruppo": "Arti inferiori",
     "nome": "Leg curl seduto",
     "inglese": "Seated Leg Curl",
     "target": "Ischiocrurali",
     "sinergici": "Gastrocnemio",
     "pattern": "Isolation",
-    "attrezzatura": "Macchina"
+    "attrezzatura": "Macchina",
+    "curva": "Ascendente",
+    "rom": "Da gambe estese a flessione completa delle ginocchia"
   },
   {
-    "id": "ex-41",
+    "id": "ex-32",
     "gruppo": "Arti inferiori",
     "nome": "Hip thrust con bilanciere",
     "inglese": "Barbell Hip Thrust",
     "target": "Grande gluteo",
     "sinergici": "Ischiocrurali; quadricipiti",
     "pattern": "Hinge",
-    "attrezzatura": "Bilanciere"
+    "attrezzatura": "Bilanciere",
+    "curva": "Isometrica / campana",
+    "rom": "Da flessione profonda dell’anca al blocco in estensione"
   },
   {
-    "id": "ex-42",
-    "gruppo": "Arti inferiori",
-    "nome": "Affondi con manubri",
-    "inglese": "Dumbbell Lunges",
-    "target": "Quadricipiti; grande gluteo",
-    "sinergici": "Ischiocrurali; adduttori; core",
-    "pattern": "Lunge",
-    "attrezzatura": "Manubri"
-  },
-  {
-    "id": "ex-43",
+    "id": "ex-33",
     "gruppo": "Arti inferiori",
     "nome": "Abductor machine",
     "inglese": "Hip Abduction Machine",
     "target": "Gluteo medio e piccolo",
     "sinergici": "Tensore della fascia lata",
     "pattern": "Isolation",
-    "attrezzatura": "Macchina"
+    "attrezzatura": "Macchina",
+    "curva": "Campana",
+    "rom": "Da adduzione a massima abduzione"
   },
   {
-    "id": "ex-44",
+    "id": "ex-34",
     "gruppo": "Arti inferiori",
     "nome": "Adductor machine",
     "inglese": "Hip Adduction Machine",
     "target": "Adduttori (grande, lungo, breve)",
     "sinergici": "Pettineo; gracile",
     "pattern": "Isolation",
-    "attrezzatura": "Macchina"
+    "attrezzatura": "Macchina",
+    "curva": "Campana",
+    "rom": "Da massimo allungamento in abduzione alla chiusura"
   },
   {
-    "id": "ex-45",
+    "id": "ex-35",
     "gruppo": "Arti inferiori",
     "nome": "Calf raise in piedi",
     "inglese": "Standing Calf Raise",
     "target": "Gastrocnemio",
     "sinergici": "Soleo; tibiale posteriore",
     "pattern": "Isolation",
-    "attrezzatura": "Macchina / bilanciere"
+    "attrezzatura": "Macchina / bilanciere",
+    "curva": "Campana",
+    "rom": "Da massimo stiramento plantare a flessione dorsale"
   },
   {
-    "id": "ex-46",
+    "id": "ex-36",
     "gruppo": "Arti inferiori",
     "nome": "Calf raise seduto",
     "inglese": "Seated Calf Raise",
     "target": "Soleo",
     "sinergici": "Gastrocnemio",
     "pattern": "Isolation",
-    "attrezzatura": "Macchina"
+    "attrezzatura": "Macchina",
+    "curva": "Campana",
+    "rom": "Da massimo allungamento basso a estensione plantare alta"
+  },
+  {
+    "gruppo": "Arti inferiori",
+    "nome": "Leg extension da seduto",
+    "inglese": "Seated Leg Extension",
+    "target": "Quadricipiti (completo)",
+    "sinergici": "Nessuno (isolamento)",
+    "pattern": "Isolation",
+    "attrezzatura": "Macchina",
+    "curva": "Discendente",
+    "rom": "Da flessione del ginocchio a estensione quasi completa",
+    "id": "ex-37"
+  },
+  {
+    "gruppo": "Arti inferiori",
+    "nome": "Leg curl in piedi",
+    "inglese": "Standing Leg Curl",
+    "target": "Ischiocrurali (capo breve)",
+    "sinergici": "Gastrocnemio",
+    "pattern": "Isolation",
+    "attrezzatura": "Macchina",
+    "curva": "Campana",
+    "rom": "Da gamba estesa a flessione isolata del ginocchio",
+    "id": "ex-38"
+  },
+  {
+    "gruppo": "Arti inferiori",
+    "nome": "Slanci al cavo per glutei",
+    "inglese": "Cable Glute Kickback",
+    "target": "Grande gluteo",
+    "sinergici": "Ischiocrurali",
+    "pattern": "Isolation",
+    "attrezzatura": "Cavi",
+    "curva": "Ascendente",
+    "rom": "Da anca flessa a massima estensione posteriore",
+    "id": "ex-39"
+  },
+  {
+    "gruppo": "Arti inferiori",
+    "nome": "Sollevamento punte per tibiale anteriore",
+    "inglese": "Tibialis Anterior Raise",
+    "target": "Tibiale anteriore",
+    "sinergici": "Estensori delle dita",
+    "pattern": "Isolation",
+    "attrezzatura": "Cavi / corpo libero",
+    "curva": "Ascendente",
+    "rom": "Da flessione plantare a flessione dorsale completa",
+    "id": "ex-40"
   }
 ];
