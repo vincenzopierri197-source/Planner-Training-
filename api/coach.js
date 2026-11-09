@@ -37,7 +37,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GEMINI_API_KEY },
       body: JSON.stringify({
-        model: process.env.GEMINI_MODEL || 'gemini-3.1-flash-preview',
+        model: 'gemini-3.5-flash-lite',
         input: prompt,
         tools: [{ type: 'google_search' }],
         response_format: { type: 'text', mime_type: 'application/json', schema },
