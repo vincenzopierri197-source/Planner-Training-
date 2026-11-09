@@ -68,11 +68,13 @@ document.querySelectorAll('[data-remove-exercise]').forEach(btn=>btn.addEventLis
 }
 function dayPlanFor(i){
 const d=days[i],activity=settings.activities[i];
-if(activity===d.type)return {subtitle:d.subtitle,plan:d.plan};
 if(activity==='Palestra'){
 const session=settings.gymSessions?.[i]||'Seduta da definire';
+const baseSession={0:'Upper Body · spinta / trazione',3:'Lower Body & Core',4:'Upper Body · ipertrofia'}[i];
+if(d.type==='Palestra'&&session===baseSession)return {subtitle:session,plan:d.plan};
 return {subtitle:session==='Seduta da definire'?'Seduta palestra · da definire':session,plan:[['Colazione','Loaded durante un pasto con grassi, se previsto nel tuo piano.'],['30–45 min prima','Snack facoltativo: banana oppure 2 gallette con marmellata.'],['30–40 min prima','PRE solo se previsto e non oltre le 17:00; rispetta etichetta e tolleranza.'],['Post-workout','Pasto con proteine; Whey solo se utile. Creatina 3–5 g secondo il piano.']]};
 }
+if(activity===d.type)return {subtitle:d.subtitle,plan:d.plan};
 if(activity==='Corsa')return {subtitle:'Corsa · seduta da definire',plan:[['Prima e durante','Acqua secondo sete e condizioni; niente PRE prima della corsa.'],['Reintegro','Elettroliti solo per uscite oltre 60 minuti o sudorazione intensa.'],['Nel resto della giornata','Creatina 3–5 g con un pasto, se prevista; copri il target giornaliero di proteine e acqua.']]};
 return {subtitle:'Riposo · recupero',plan:[['Durante la giornata','Mantieni alimentazione, proteine e idratazione previste.'],['Integratori','Creatina 3–5 g con un pasto, se prevista; Whey solo se utile a completare le proteine.']]};
 }
