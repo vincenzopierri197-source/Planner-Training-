@@ -12,7 +12,7 @@ Distribuzione prevista con Vercel collegato a questo repository GitHub.
 
 ## Eserciziario biomeccanico
 
-Il database è stato compilato dal compendio PDF fornito e contiene nome italiano e internazionale, distretto, target principale, muscoli sinergisti, pattern e attrezzatura. Nel sito si può cercare per nome, muscolo o attrezzatura e filtrare per distretto, attrezzatura e pattern. I dati sono incorporati come script locale: il catalogo non richiede una chiamata API o un servizio esterno.
+Il database è stato verificato sul compendio PDF e contiene 40 esercizi con nome italiano e internazionale, distretto, target principale, muscoli sinergisti, pattern, attrezzatura, curva di resistenza e ROM ottimale. Gli esercizi possono essere assegnati alle sedute settimanali e le modifiche si salvano nel browser. Nel sito si può cercare per nome, muscolo o attrezzatura e filtrare per distretto, attrezzatura e pattern. I dati sono incorporati come script locale: il catalogo non richiede una chiamata API o un servizio esterno.
 
 ## Pubblicazione
 
