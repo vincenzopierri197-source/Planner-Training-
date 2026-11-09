@@ -35,7 +35,11 @@ export default async function handler(req, res) {
   try {
     const upstream = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GEMINI_API_KEY },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': process.env.GEMINI_API_KEY,
+        'Api-Revision': '2026-05-20'
+      },
       body: JSON.stringify({
         model: 'gemini-3.5-flash-lite',
         input: prompt,
@@ -52,14 +56,24 @@ export default async function handler(req, res) {
     const steps = Array.isArray(payload.steps) ? payload.steps : [];
     let output = '';
     const sources = [];
+    const addSource = (url, title) => {
+      if (typeof url === 'string' && url.startsWith('https://') && !sources.some(s => s.url === url)) {
+        sources.push({ title: title || url, url });
+      }
+    };
     for (const step of steps) {
-      if (step.type === 'model_output') {
-        for (const block of step.content || []) if (block.type === 'text') output += block.text || '';
-        const chunks = step.grounding_metadata?.grounding_chunks || step.groundingMetadata?.groundingChunks || [];
-        for (const chunk of chunks) {
-          const web = chunk.web || {};
-          if (web.uri && /^https:\/\//.test(web.uri) && !sources.some(s => s.url === web.uri)) sources.push({ title: web.title || web.uri, url: web.uri });
+      if (step.type !== 'model_output') continue;
+      for (const block of step.content || []) {
+        if (block.type !== 'text') continue;
+        output += block.text || '';
+        for (const citation of block.annotations || []) {
+          if (citation.type === 'url_citation') addSource(citation.url, citation.title);
         }
+      }
+      const chunks = step.grounding_metadata?.grounding_chunks || step.groundingMetadata?.groundingChunks || [];
+      for (const chunk of chunks) {
+        const web = chunk.web || {};
+        addSource(web.uri, web.title);
       }
     }
     const result = JSON.parse(output);
