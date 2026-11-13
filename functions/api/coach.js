@@ -1,24 +1,41 @@
-export default async function handler(req, res) {
-  res.setHeader('Cache-Control', 'no-store');
-  if (req.method === 'GET') {
-    return res.status(200).json({
-      ok: true,
-      geminiConfigured: Boolean(process.env.GEMINI_API_KEY),
-      accepts: 'POST'
-    });
-  }
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Metodo non consentito.' });
-  if (!process.env.GEMINI_API_KEY) {
-    return res.status(503).json({ error: 'Variabile GEMINI_API_KEY assente nella configurazione Vercel.' });
+const JSON_HEADERS = {
+  'Content-Type': 'application/json; charset=utf-8',
+  'Cache-Control': 'no-store'
+};
+
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
+}
+
+export function onRequestGet({ env }) {
+  return json({
+    ok: true,
+    geminiConfigured: Boolean(env.GEMINI_API_KEY),
+    accepts: 'POST'
+  });
+}
+
+export async function onRequestPost({ request, env }) {
+  if (!env.GEMINI_API_KEY) {
+    return json({ error: 'Imposta GEMINI_API_KEY nelle variabili segrete del progetto Cloudflare Pages.' }, 503);
   }
 
-  const body = req.body || {};
-  if (typeof body.message !== 'string' || body.message.trim().length < 1 || body.message.length > 1500) {
-    return res.status(400).json({ error: 'La richiesta deve contenere da 1 a 1500 caratteri.' });
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: 'La richiesta deve contenere JSON valido.' }, 400);
   }
+
+  if (typeof body?.message !== 'string' || body.message.trim().length < 1 || body.message.length > 1500) {
+    return json({ error: 'La richiesta deve contenere da 1 a 1500 caratteri.' }, 400);
+  }
+
   const history = Array.isArray(body.history) ? body.history.slice(-8) : [];
   const context = body.context && typeof body.context === 'object' ? body.context : {};
-  const safeHistory = history.map(x => `${x.role === 'user' ? 'Utente' : 'Assistente'}: ${String(x.text || '').slice(0, 1200)}`).join('\n');
+  const safeHistory = history
+    .map(item => `${item?.role === 'user' ? 'Utente' : 'Assistente'}: ${String(item?.text || '').slice(0, 1200)}`)
+    .join('\n');
   const prompt = `Richiesta più recente dell'utente: ${body.message.trim()}\n\nConversazione recente:\n${safeHistory}\n\nContesto attuale del planner (JSON):\n${JSON.stringify(context).slice(0, 5000)}\n\nFornisci una risposta concisa in italiano. Se la domanda riguarda norme o raccomandazioni aggiornate, usa Google Search, dai priorità a fonti istituzionali o primarie (EUR-Lex, Ministero della Salute, EFSA, ISSN, ACSM e articoli scientifici primari), distingui legge da raccomandazione e cita i limiti. Non inventare riferimenti o URL. Non formulare diagnosi né prescrivere terapie. Proponi cambi del planner solo se richiesti chiaramente e soltanto per attività e orari. Mantieni i dosaggi di integratori invariati e non proporre PRE prima della corsa o dopo le 17:00. Quando vuoi proporre un cambio, compilalo in changes; altrimenti usa un array vuoto.`;
 
   const schema = {
@@ -46,7 +63,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-goog-api-key': process.env.GEMINI_API_KEY,
+        'x-goog-api-key': env.GEMINI_API_KEY,
         'Api-Revision': '2026-05-20'
       },
       body: JSON.stringify({
@@ -59,31 +76,33 @@ export default async function handler(req, res) {
         generation_config: { max_output_tokens: 900 }
       })
     });
+
     let payload;
     try {
       payload = await upstream.json();
     } catch {
-      return res.status(502).json({ error: `Gemini ha restituito una risposta non JSON (HTTP ${upstream.status}).` });
-    }
-    if (!upstream.ok) {
-      const providerMessage = String(payload?.error?.message || payload?.message || '')
-        .replaceAll(process.env.GEMINI_API_KEY, '[chiave nascosta]')
-        .slice(0, 240);
-      console.error('Gemini API error:', upstream.status, providerMessage);
-      return res.status(502).json({
-        error: `Gemini ha rifiutato la richiesta (HTTP ${upstream.status})${providerMessage ? `: ${providerMessage}` : '.'}`
-      });
+      return json({ error: `Gemini ha restituito una risposta non JSON (HTTP ${upstream.status}).` }, 502);
     }
 
-    const steps = Array.isArray(payload.steps) ? payload.steps : [];
+    if (!upstream.ok) {
+      const providerMessage = String(payload?.error?.message || payload?.message || '')
+        .replaceAll(env.GEMINI_API_KEY, '[chiave nascosta]')
+        .slice(0, 240);
+      console.error('Gemini API error:', upstream.status, providerMessage);
+      return json({
+        error: `Gemini ha rifiutato la richiesta (HTTP ${upstream.status})${providerMessage ? `: ${providerMessage}` : '.'}`
+      }, 502);
+    }
+
     const sources = [];
     const textParts = [];
     const addSource = (url, title) => {
-      if (typeof url === 'string' && url.startsWith('https://') && !sources.some(s => s.url === url)) {
+      if (typeof url === 'string' && url.startsWith('https://') && !sources.some(source => source.url === url)) {
         sources.push({ title: title || url, url });
       }
     };
-    for (const step of steps) {
+
+    for (const step of Array.isArray(payload.steps) ? payload.steps : []) {
       if (step.type !== 'model_output') continue;
       for (const block of step.content || []) {
         if (block.type !== 'text') continue;
@@ -98,33 +117,37 @@ export default async function handler(req, res) {
         addSource(web.uri, web.title);
       }
     }
+
     if (!textParts.length && Array.isArray(payload.outputs)) {
       for (const item of payload.outputs) {
         if (item.type === 'text' && typeof item.text === 'string') textParts.push(item.text);
       }
     }
+
     const output = textParts.join('').trim();
-    if (!output) {
-      return res.status(502).json({ error: 'Gemini ha risposto senza testo. Controlla modello e configurazione API.' });
-    }
+    if (!output) return json({ error: 'Gemini ha risposto senza testo leggibile.' }, 502);
+
     let result;
     try {
       result = JSON.parse(output);
     } catch {
       console.error('Gemini response was not valid JSON.');
-      return res.status(502).json({ error: 'Gemini ha risposto, ma il formato ricevuto non è valido. Riprova.' });
+      return json({ error: 'Gemini ha restituito una risposta in un formato non valido. Riprova.' }, 502);
     }
-    const changes = Array.isArray(result.changes) ? result.changes.filter(c =>
-      Number.isInteger(c.day) && c.day >= 0 && c.day <= 6 &&
-      ['Palestra', 'Corsa', 'Riposo'].includes(c.activity) &&
-      (c.time === '-' || (typeof c.time === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(c.time)))
+
+    const changes = Array.isArray(result.changes) ? result.changes.filter(change =>
+      Number.isInteger(change.day) && change.day >= 0 && change.day <= 6 &&
+      ['Palestra', 'Corsa', 'Riposo'].includes(change.activity) &&
+      (change.time === '-' || (typeof change.time === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(change.time)))
     ) : [];
-    return res.status(200).json({ reply: String(result.reply || '').slice(0, 4000), changes, sources: sources.slice(0, 8) });
+
+    return json({
+      reply: String(result.reply || '').slice(0, 4000),
+      changes,
+      sources: sources.slice(0, 8)
+    });
   } catch (error) {
     console.error('Gemini handler failed:', error?.name || 'Error');
-    const message = error?.name === 'AbortError'
-      ? 'La richiesta a Gemini è scaduta. Riprova.'
-      : 'Errore interno nel collegamento a Gemini. Controlla i log della funzione Vercel.';
-    return res.status(error?.name === 'AbortError' ? 504 : 502).json({ error: message });
+    return json({ error: 'Errore interno nel collegamento a Gemini. Controlla i log di Cloudflare Pages.' }, 502);
   }
 }
