@@ -19,6 +19,8 @@ Applicazione statica con funzioni server su Cloudflare Pages.
 
 La funzione `/api/coach` condivide lo stesso dominio della pagina: non serve configurare CORS. La chiave resta nel runtime server e non viene inclusa nell’HTML o nei file pubblici.
 
+Google Search è disattivato per impostazione predefinita per mantenere compatibilità con il tier gratuito di Gemini 3.5 Flash-Lite. Se il tuo progetto Gemini ha un tier e una quota che supportano il grounding, imposta `GEMINI_ENABLE_GOOGLE_SEARCH=true` nelle variabili runtime di Cloudflare Pages e ridistribuisci. In modalità senza ricerca, l’assistente dichiara quando non può verificare informazioni aggiornate e non mostra fonti web.
+
 GitHub Pages può continuare a pubblicare una copia statica del planner, ma non esegue Pages Functions. La chat Gemini funziona soltanto sull’hosting Cloudflare Pages configurato sopra.
 
 ## Dati e protezioni
