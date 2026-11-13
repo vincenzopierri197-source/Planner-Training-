@@ -1,7 +1,16 @@
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
+  if (req.method === 'GET') {
+    return res.status(200).json({
+      ok: true,
+      geminiConfigured: Boolean(process.env.GEMINI_API_KEY),
+      accepts: 'POST'
+    });
+  }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Metodo non consentito.' });
-  if (!process.env.GEMINI_API_KEY) return res.status(503).json({ error: 'Gemini non è configurato sul server.' });
+  if (!process.env.GEMINI_API_KEY) {
+    return res.status(503).json({ error: 'Variabile GEMINI_API_KEY assente nella configurazione Vercel.' });
+  }
 
   const body = req.body || {};
   if (typeof body.message !== 'string' || body.message.trim().length < 1 || body.message.length > 1500) {
@@ -50,12 +59,25 @@ export default async function handler(req, res) {
         generation_config: { max_output_tokens: 900 }
       })
     });
-    const payload = await upstream.json();
-    if (!upstream.ok) return res.status(502).json({ error: 'Gemini non ha completato la ricerca. Riprova tra poco.' });
+    let payload;
+    try {
+      payload = await upstream.json();
+    } catch {
+      return res.status(502).json({ error: `Gemini ha restituito una risposta non JSON (HTTP ${upstream.status}).` });
+    }
+    if (!upstream.ok) {
+      const providerMessage = String(payload?.error?.message || payload?.message || '')
+        .replaceAll(process.env.GEMINI_API_KEY, '[chiave nascosta]')
+        .slice(0, 240);
+      console.error('Gemini API error:', upstream.status, providerMessage);
+      return res.status(502).json({
+        error: `Gemini ha rifiutato la richiesta (HTTP ${upstream.status})${providerMessage ? `: ${providerMessage}` : '.'}`
+      });
+    }
 
     const steps = Array.isArray(payload.steps) ? payload.steps : [];
-    let output = '';
     const sources = [];
+    const textParts = [];
     const addSource = (url, title) => {
       if (typeof url === 'string' && url.startsWith('https://') && !sources.some(s => s.url === url)) {
         sources.push({ title: title || url, url });
@@ -65,9 +87,9 @@ export default async function handler(req, res) {
       if (step.type !== 'model_output') continue;
       for (const block of step.content || []) {
         if (block.type !== 'text') continue;
-        output += block.text || '';
+        textParts.push(block.text || '');
         for (const citation of block.annotations || []) {
-          if (citation.type === 'url_citation') addSource(citation.url, citation.title);
+          if (citation.type === 'url_citation') addSource(citation.url || citation.source, citation.title);
         }
       }
       const chunks = step.grounding_metadata?.grounding_chunks || step.groundingMetadata?.groundingChunks || [];
@@ -76,7 +98,22 @@ export default async function handler(req, res) {
         addSource(web.uri, web.title);
       }
     }
-    const result = JSON.parse(output);
+    if (!textParts.length && Array.isArray(payload.outputs)) {
+      for (const item of payload.outputs) {
+        if (item.type === 'text' && typeof item.text === 'string') textParts.push(item.text);
+      }
+    }
+    const output = textParts.join('').trim();
+    if (!output) {
+      return res.status(502).json({ error: 'Gemini ha risposto senza testo. Controlla modello e configurazione API.' });
+    }
+    let result;
+    try {
+      result = JSON.parse(output);
+    } catch {
+      console.error('Gemini response was not valid JSON.');
+      return res.status(502).json({ error: 'Gemini ha risposto, ma il formato ricevuto non è valido. Riprova.' });
+    }
     const changes = Array.isArray(result.changes) ? result.changes.filter(c =>
       Number.isInteger(c.day) && c.day >= 0 && c.day <= 6 &&
       ['Palestra', 'Corsa', 'Riposo'].includes(c.activity) &&
@@ -84,6 +121,10 @@ export default async function handler(req, res) {
     ) : [];
     return res.status(200).json({ reply: String(result.reply || '').slice(0, 4000), changes, sources: sources.slice(0, 8) });
   } catch (error) {
-    return res.status(502).json({ error: 'Risposta Gemini non disponibile o non leggibile. Riprova tra poco.' });
+    console.error('Gemini handler failed:', error?.name || 'Error');
+    const message = error?.name === 'AbortError'
+      ? 'La richiesta a Gemini è scaduta. Riprova.'
+      : 'Errore interno nel collegamento a Gemini. Controlla i log della funzione Vercel.';
+    return res.status(error?.name === 'AbortError' ? 504 : 502).json({ error: message });
   }
 }
