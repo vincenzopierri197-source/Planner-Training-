@@ -1,27 +1,32 @@
 # Planner atleta ibrido
 
-Distribuzione prevista con Vercel collegato a questo repository GitHub.
+Applicazione statica con funzioni server su Cloudflare Pages.
 
-## File principali
+## Contenuti
 
-- `index.html`: applicazione web e interfaccia del catalogo.
-- `exercises.js`: database locale con 40 esercizi strutturati.
-- `api/coach.js`: endpoint Gemini con ricerca Google e fonti citate.
-- `package.json`: abilita i moduli ES usati dalla funzione backend.
-- `vercel.json`: configurazione della funzione API.
+- `index.html`: planner, diario, checklist, chat e catalogo.
+- `exercises.js`: catalogo locale di 40 esercizi.
+- `functions/api/coach.js`: API Gemini eseguita come Pages Function.
+- `build.mjs`: copia i file statici in `dist/`.
+- `wrangler.toml`: configurazione Pages Functions e directory di output.
 
-## Eserciziario biomeccanico
+## Pubblicazione su Cloudflare Pages
 
-Il database è stato verificato sul compendio PDF e contiene 40 esercizi con nome italiano e internazionale, distretto, target principale, muscoli sinergisti, pattern, attrezzatura, curva di resistenza e ROM ottimale. Gli esercizi possono essere assegnati alle sedute settimanali e le modifiche si salvano nel browser. Nel sito si può cercare per nome, muscolo o attrezzatura e filtrare per distretto, attrezzatura e pattern. I dati sono incorporati come script locale: il catalogo non richiede una chiamata API o un servizio esterno.
+1. Crea un progetto Pages collegato a questa repository GitHub.
+2. Imposta il comando di build su `npm run build` e la directory di output su `dist`. Il preset è `None`.
+3. In **Settings → Functions → Variables and Secrets**, aggiungi `GEMINI_API_KEY` come segreto. Configuralo sia per produzione sia per le anteprime se vuoi provare la chat nelle preview.
+4. Pubblica il progetto e usa il suo dominio `*.pages.dev` oppure collega il tuo dominio.
 
-## Pubblicazione
+La funzione `/api/coach` condivide lo stesso dominio della pagina: non serve configurare CORS. La chiave resta nel runtime server e non viene inclusa nell’HTML o nei file pubblici.
 
-1. Importa il repository in Vercel.
-2. Nelle variabili d'ambiente del progetto Vercel, aggiungi `GEMINI_API_KEY`.
-3. Ridistribuisci il progetto.
+GitHub Pages può continuare a pubblicare una copia statica del planner, ma non esegue Pages Functions. La chat Gemini funziona soltanto sull’hosting Cloudflare Pages configurato sopra.
 
-La chat usa `gemini-3.5-flash-lite` con Google Search grounding. La chiave Gemini deve rimanere nella configurazione server di Vercel: non inserirla nell'HTML o nel repository. Non serve una chiave Groq. GitHub Pages da solo non esegue `api/coach.js`.
+## Dati e protezioni
 
-La chat invia il testo inserito e una parte della conversazione a Gemini. Le interazioni non vengono archiviate lato Gemini (`store: false`). Le modifiche a giorni e orari richiedono conferma esplicita.
+La chat invia a Gemini la domanda, fino a otto messaggi recenti e il contesto del planner (peso, altezza, obiettivi di proteine/acqua, attività e orari). Le richieste non vengono archiviate da Gemini (`store: false`). I dati del diario, delle impostazioni e della conversazione restano anche in `localStorage` nel browser.
 
-Configura limiti di quota/spesa nel progetto Gemini e una protezione anti-abuso prima di rendere pubblico l'endpoint. La chiave non è esposta nel sito, ma l'endpoint pubblico può essere chiamato da terzi e consumare la quota del progetto.
+L’endpoint è pubblico: configura limiti di quota/spesa nel progetto Gemini e protezioni anti-abuso sul servizio. Non inserire dati identificativi o informazioni sanitarie sensibili nella chat.
+
+## Catalogo
+
+Il database contiene 40 esercizi con nome italiano e internazionale, distretto, target, sinergisti, pattern, attrezzatura, curva di resistenza e ROM. Le assegnazioni del planner vengono salvate nel browser.
